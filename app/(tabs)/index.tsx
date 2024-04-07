@@ -1,17 +1,21 @@
-import { StyleSheet } from 'react-native';
+import { StyleSheet, TouchableOpacity } from 'react-native';
 
-import EditScreenInfo from '@/components/EditScreenInfo';
-import { Text, View } from '@/components/Themed';
+import { Text, View } from 'react-native';
+import { Link, useNavigation, useRouter } from 'expo-router';
+
 
 export default function TabOneScreen() {
+
+  const router = useRouter();
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Tab One</Text>
-      <View style={styles.separator} lightColor="#eee" darkColor="rgba(255,255,255,0.1)" />
-      <EditScreenInfo path="app/(tabs)/index.tsx" />
+        <TouchableOpacity onPress={() => router.push('/(modals)/auth')} style={styles.loginBtn} >
+          <Text style={styles.text}>Login</Text>
+        </TouchableOpacity>
     </View>
   );
 }
+
 
 const styles = StyleSheet.create({
   container: {
@@ -19,9 +23,16 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  title: {
+  loginBtn: {
+    backgroundColor: 'black',
+    padding: 15,
+    paddingHorizontal: 25,
+    borderRadius: 10
+  },
+  text: {
     fontSize: 20,
     fontWeight: 'bold',
+    color: 'white',
   },
   separator: {
     marginVertical: 30,

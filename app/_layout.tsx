@@ -3,9 +3,13 @@ import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native
 import { useFonts } from 'expo-font';
 import { Stack } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
-import { useEffect } from 'react';
-
+import { useEffect, useState } from 'react';
 import { useColorScheme } from '@/components/useColorScheme';
+import { useRouter } from 'expo-router';
+import { TouchableOpacity } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+
 
 export {
   // Catch any errors thrown by the Layout component.
@@ -22,20 +26,27 @@ SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
   const [loaded, error] = useFonts({
-    SpaceMono: require('../assets/fonts/SpaceMono-Regular.ttf'),
+    'font-regular': require('../assets/fonts/SpaceMono-Regular.ttf'),
     ...FontAwesome.font,
   });
 
-  // Expo Router uses Error Boundaries to catch errors in the navigation tree.
+  const [isFontsLoaded, setFontsLoaded] = useState(false);
+
   useEffect(() => {
     if (error) throw error;
   }, [error]);
 
   useEffect(() => {
     if (loaded) {
-      SplashScreen.hideAsync();
+      setFontsLoaded(true);
     }
   }, [loaded]);
+
+  useEffect(() => {
+    if ( isFontsLoaded) {
+      SplashScreen.hideAsync();
+    }
+  }, [ isFontsLoaded]);
 
   if (!loaded) {
     return null;
@@ -44,15 +55,28 @@ export default function RootLayout() {
   return <RootLayoutNav />;
 }
 
-function RootLayoutNav() {
+const queryClient = new QueryClient()
+
+const RootLayoutNav = () => {
+  const router = useRouter();
   const colorScheme = useColorScheme();
 
   return (
+    <QueryClientProvider client={queryClient}>
     <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
       <Stack>
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen name="modal" options={{ presentation: 'modal' }} />
+        <Stack.Screen name="(modals)/auth" options={{
+          presentation: 'modal',
+          title: 'Login or sign up',
+          headerLeft: () => (
+            <TouchableOpacity onPress={() => router.back()}>
+              <Ionicons name='close-outline' size={28} />
+            </TouchableOpacity>
+          )
+        }} />
       </Stack>
     </ThemeProvider>
+    </QueryClientProvider>
   );
 }
