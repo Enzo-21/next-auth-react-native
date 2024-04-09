@@ -9,6 +9,7 @@ import { useRouter } from 'expo-router';
 import { TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { useAuth } from '@/hooks/useAuth';
 
 
 export {
@@ -43,10 +44,10 @@ export default function RootLayout() {
   }, [loaded]);
 
   useEffect(() => {
-    if ( isFontsLoaded) {
+    if (isFontsLoaded) {
       SplashScreen.hideAsync();
     }
-  }, [ isFontsLoaded]);
+  }, [isFontsLoaded]);
 
   if (!loaded) {
     return null;
@@ -61,22 +62,25 @@ const RootLayoutNav = () => {
   const router = useRouter();
   const colorScheme = useColorScheme();
 
+  const { isLoaded, user } = useAuth();
+
+  useEffect(() => {
+    if (isLoaded && !user) {
+      router.push('/(modals)/auth')
+    }
+  }, [isLoaded, user, router])
+
   return (
     <QueryClientProvider client={queryClient}>
-    <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-      <Stack>
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen name="(modals)/auth" options={{
-          presentation: 'modal',
-          title: 'Login or sign up',
-          headerLeft: () => (
-            <TouchableOpacity onPress={() => router.back()}>
-              <Ionicons name='close-outline' size={28} />
-            </TouchableOpacity>
-          )
-        }} />
-      </Stack>
-    </ThemeProvider>
+      <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
+        <Stack>
+          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+          <Stack.Screen name="(modals)/auth" options={{
+            presentation: 'modal',
+            title: 'Login or sign up'
+          }} />
+        </Stack>
+      </ThemeProvider>
     </QueryClientProvider>
   );
 }

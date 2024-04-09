@@ -1,4 +1,5 @@
 import { useAuth } from '@/hooks/useAuth';
+import { useQueryClient } from '@tanstack/react-query';
 import React from 'react';
 import { ActivityIndicator, Dimensions, Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import Animated, {
@@ -14,8 +15,8 @@ const { height } = Dimensions.get('window');
 const IMG_HEIGHT = 150;
 
 const AccountPage = () => {
-  const { query, logout } = useAuth()
-  const user = query.data
+  // Access the client
+  const { logout, user } = useAuth();
   const scrollRef = useAnimatedRef<Animated.ScrollView>()
   const scrollOffset = useScrollViewOffset(scrollRef);
   const imageAnimatedStyle = useAnimatedStyle(() => {
