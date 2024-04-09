@@ -1,4 +1,4 @@
-import api from '@/api/ApiManager';
+import api from '@/services/api/api-manager';
 import { useQuery } from '@tanstack/react-query';
 import { getTokenFromSecureStore, removeTokenFromSecureStore } from './useSecureStore';
 
