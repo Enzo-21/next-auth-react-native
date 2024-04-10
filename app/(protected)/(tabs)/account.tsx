@@ -1,7 +1,7 @@
+import EditScreenInfo from '@/components/EditScreenInfo';
+import { Text, View } from '@/components/Themed';
 import { useAuth } from '@/hooks/useAuth';
-import { useQueryClient } from '@tanstack/react-query';
-import React from 'react';
-import { ActivityIndicator, Dimensions, Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Dimensions, Image, StyleSheet, TouchableOpacity, Button, Alert } from 'react-native';
 import Animated, {
   SlideInDown,
   interpolate,
@@ -11,12 +11,10 @@ import Animated, {
 } from 'react-native-reanimated';
 
 const { width } = Dimensions.get('window');
-const { height } = Dimensions.get('window');
-const IMG_HEIGHT = 150;
+const IMG_HEIGHT = 180;
 
-const AccountPage = () => {
-  // Access the client
-  const { logout, user } = useAuth();
+export default function AccountScreen() {
+  const { signOut, user } = useAuth()
   const scrollRef = useAnimatedRef<Animated.ScrollView>()
   const scrollOffset = useScrollViewOffset(scrollRef);
   const imageAnimatedStyle = useAnimatedStyle(() => {
@@ -35,6 +33,18 @@ const AccountPage = () => {
       ],
     };
   });
+  const handleLogout = () => {
+    Alert.alert(
+      'Logout',
+      'Are you sure you want to logout?',
+      [
+        { text: 'Cancel', style: 'cancel' },
+        { text: 'Logout', onPress: signOut, style: 'destructive' },
+      ],
+      { cancelable: false }
+    );
+  };
+
   
 
   return (
@@ -49,7 +59,7 @@ const AccountPage = () => {
           style={[styles.image, imageAnimatedStyle]}
           resizeMode="cover"
         />
-        <View style={{ marginTop: -40, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+        <View style={{ marginTop: -40, display: 'flex', justifyContent: 'center', alignItems: 'center', backgroundColor: 'transparent' }}>
           <View style={{ height: 86, width: 86, borderRadius: 86, borderColor: 'white', backgroundColor: 'white', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
             <Image source={{ uri: user?.image }} style={{ height: 80, width: 80, borderRadius: 80 }} />
           </View>
@@ -86,10 +96,10 @@ const AccountPage = () => {
         </View>
       </Animated.ScrollView>
 
-      <Animated.View style={{ height: 50, display: 'flex' }} entering={SlideInDown.delay(200)}>
+      <Animated.View style={{ height: 50, display: 'flex', position: 'absolute', bottom: 0, alignSelf: 'center' }} entering={SlideInDown.delay(200)}>
         <View
-          style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
-          <TouchableOpacity onPress={()=> logout()} style={[{ paddingHorizontal: 20, paddingVertical: 10, backgroundColor: 'black', borderRadius: 8 }]}>
+          style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center', backgroundColor: 'transparent' }}>
+          <TouchableOpacity onPress={()=> handleLogout()} style={[{ paddingHorizontal: 20, paddingVertical: 10, backgroundColor: 'black', borderRadius: 8, borderColor: 'gray', borderWidth: 2}]}>
             <Text style={{color: 'white', fontWeight: '700'}}>Logout</Text>
           </TouchableOpacity>
         </View>
@@ -101,7 +111,6 @@ const AccountPage = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: 'white',
   },
   image: {
     height: IMG_HEIGHT,
@@ -109,7 +118,6 @@ const styles = StyleSheet.create({
   },
   infoContainer: {
     padding: 24,
-    backgroundColor: '#fff',
   },
   name: {
     fontSize: 26,
@@ -180,5 +188,3 @@ const styles = StyleSheet.create({
     marginTop: 10,
   },
 });
-
-export default AccountPage;

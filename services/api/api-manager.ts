@@ -1,4 +1,4 @@
-import { getTokenFromSecureStore } from '@/hooks/useSecureStore';
+import { getTokenFromSecureStore } from '@/hooks/useToken';
 import axios, { AxiosInstance } from 'axios';
 
 // Create Axios instance with default configuration

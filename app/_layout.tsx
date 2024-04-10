@@ -1,16 +1,13 @@
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
 import { useFonts } from 'expo-font';
-import { Stack } from 'expo-router';
+import { Slot, Stack } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
-import { useEffect, useState } from 'react';
-import { useColorScheme } from '@/components/useColorScheme';
-import { useRouter } from 'expo-router';
-import { TouchableOpacity } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { useAuth } from '@/hooks/useAuth';
+import { useEffect } from 'react';
 
+import { useColorScheme } from '@/components/useColorScheme';
+import { AuthProvider, useAuth } from '@/hooks/useAuth';
+import LoadingScreen from '@/components/indicators/loading-screen';
 
 export {
   // Catch any errors thrown by the Layout component.
@@ -27,60 +24,39 @@ SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
   const [loaded, error] = useFonts({
-    'font-regular': require('../assets/fonts/SpaceMono-Regular.ttf'),
+    SpaceMono: require('../assets/fonts/SpaceMono-Regular.ttf'),
     ...FontAwesome.font,
   });
 
-  const [isFontsLoaded, setFontsLoaded] = useState(false);
-
+  // Expo Router uses Error Boundaries to catch errors in the navigation tree.
   useEffect(() => {
     if (error) throw error;
   }, [error]);
 
   useEffect(() => {
     if (loaded) {
-      setFontsLoaded(true);
+      SplashScreen.hideAsync();
     }
   }, [loaded]);
 
-  useEffect(() => {
-    if (isFontsLoaded) {
-      SplashScreen.hideAsync();
-    }
-  }, [isFontsLoaded]);
-
   if (!loaded) {
-    return null;
+    return <LoadingScreen/>
   }
 
-  return <RootLayoutNav />;
+  return (
+    <AuthProvider>
+      <RootLayoutNav/>
+    </AuthProvider>
+    )
 }
 
-const queryClient = new QueryClient()
-
-const RootLayoutNav = () => {
-  const router = useRouter();
+function RootLayoutNav() {
   const colorScheme = useColorScheme();
 
-  const { isLoaded, user } = useAuth();
-
-  useEffect(() => {
-    if (isLoaded && !user) {
-      router.push('/(modals)/auth')
-    }
-  }, [isLoaded, user, router])
-
-  return (
-    <QueryClientProvider client={queryClient}>
-      <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-        <Stack>
-          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-          <Stack.Screen name="(modals)/auth" options={{
-            presentation: 'modal',
-            title: 'Login or sign up'
-          }} />
-        </Stack>
-      </ThemeProvider>
-    </QueryClientProvider>
+    return (
+    <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
+      {/* Renders the currently selected content. In our case, the content is being selected by the AuthProvider */}
+      <Slot />
+    </ThemeProvider>
   );
 }

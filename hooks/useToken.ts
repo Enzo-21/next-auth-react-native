@@ -27,7 +27,7 @@ export const removeTokenFromSecureStore = async (): Promise<void> => {
   }
 };
 
-const useSecureStore = () => {
+const useToken = () => {
   // Initialize token state
   const [token, setToken] = useState<string | null>(null);
 
@@ -57,4 +57,4 @@ const useSecureStore = () => {
   return { token, setToken: setAuthToken, removeToken };
 };
 
-export default useSecureStore;
+export default useToken;

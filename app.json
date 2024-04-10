@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "react-native-auth",
-    "slug": "react-native-auth",
+    "name": "react-native-auth-v2",
+    "slug": "react-native-auth-v2",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",

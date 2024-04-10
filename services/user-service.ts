@@ -1,4 +1,5 @@
-import { getTokenFromSecureStore } from "@/hooks/useSecureStore";
+
+import { getTokenFromSecureStore } from "@/hooks/useToken";
 import api from "@/services/api/api-manager"
 
 const getCurrentUser = async () => {
