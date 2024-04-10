@@ -1,19 +1,17 @@
 //import useSecureStore from '@/hooks/useSecureStore';
 //import { useNavigation } from '@react-navigation/native';
-import React, { useRef } from 'react';
+import React from 'react';
 import { WebView } from 'react-native-webview';
 
-import { useRouter } from 'expo-router';
-import { ActivityIndicator, StyleSheet, View } from 'react-native';
 import { useAuth } from '@/hooks/useAuth';
 import useToken from '@/hooks/useToken';
+import { ActivityIndicator, StyleSheet, View } from 'react-native';
 
 const Auth = () => {
     const { removeToken, setToken } = useToken();
     const { signIn } = useAuth();
-    const router = useRouter()
 
-    const userAgent = 'Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/96.0.4664.110 Mobile Safari/537.36';
+    const userAgent = 'Mozilla/5.0 (Linux; Android 12.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/96.0.4664.110 Mobile Safari/537.36';
 
     // Listen for URL changes in the WebView
     const handleNavigationStateChange = async (navState: { url: string }) => {
@@ -47,7 +45,6 @@ const Auth = () => {
             style={styles.container}
             source={{ uri: 'http://localhost:3000/auth/mobile?newVisit=true' }}
             onNavigationStateChange={handleNavigationStateChange}
-            cacheEnabled={false} // Disable caching
             userAgent={userAgent} // Set the User-Agent header
             renderLoading={() => {
                 return (
@@ -57,7 +54,6 @@ const Auth = () => {
                 )
             }}
             startInLoadingState={true}
-            thirdPartyCookiesEnabled={false}
         />
     );
 };
