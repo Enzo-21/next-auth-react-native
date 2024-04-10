@@ -30,8 +30,6 @@ const Auth = () => {
                 // Store the token securely
                 await setToken(token);
 
-
-
                 // Get the user
                 await signIn()
             }
@@ -45,7 +43,7 @@ const Auth = () => {
             style={styles.container}
             source={{ uri: 'http://localhost:3000/auth/mobile?newVisit=true' }}
             onNavigationStateChange={handleNavigationStateChange}
-            userAgent={userAgent} // Set the User-Agent header
+            userAgent={userAgent}
             renderLoading={() => {
                 return (
                     <View style={styles.activityIndicator}>
