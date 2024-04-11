@@ -11,7 +11,7 @@ import { useRouter } from 'expo-router';
 
 const Auth = () => {
     const { removeToken, setToken } = useToken();
-    const { signIn } = useAuth();
+    const { authenticate } = useAuth();
     const router = useRouter()
 
     const userAgent = 'Mozilla/5.0 (Linux; Android 12.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/96.0.4664.110 Mobile Safari/537.36';
@@ -34,7 +34,7 @@ const Auth = () => {
                 await setToken(token);
 
                 // Get the user
-                await signIn()
+                await authenticate()
             }
 
         }

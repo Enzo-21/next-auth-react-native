@@ -3,13 +3,10 @@ import { useEffect } from 'react'
 
 export const useWarmUpBrowser = () => {
     useEffect(() => {
-
         void WebBrowser.warmUpAsync()
-
         return () => {
             void WebBrowser.coolDownAsync()
         }
-
     }, [])
-    
+
 }

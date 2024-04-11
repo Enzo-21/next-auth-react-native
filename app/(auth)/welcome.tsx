@@ -1,5 +1,6 @@
 import LockAnimation from '@/assets/images/animations/auth_lock.json';
-import { View, Text } from '@/components/Themed';
+import { View } from '@/components/ui/view';
+import { Text } from '@/components/ui/text';
 import { LinearGradient } from 'expo-linear-gradient'; // Import LinearGradient
 import { useRouter } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
@@ -45,7 +46,7 @@ export default function LoginScreen() {
       >
         <SafeAreaView style={styles.container}>
 
-          <Text fontWeight='black' style={styles.title}>Out of the box Authentication for React Native Apps</Text>
+          <Text  style={styles.title}>Out of the box Authentication for React Native Apps</Text>
           <AnimatedLottieView
             progress={animationProgress.current}
             style={{
@@ -57,7 +58,7 @@ export default function LoginScreen() {
 
           <View style={{ width: '100%', backgroundColor: 'transparent' }}>
             <TouchableOpacity onPress={() => router.push('/login')} style={styles.loginBtn}>
-              <Text fontWeight='bold' style={{ color: 'white', fontWeight: '700' }}>Log in</Text>
+              <Text style={{ color: 'white', fontWeight: '700' }}>Log in</Text>
             </TouchableOpacity>
             <Text style={styles.subtitle}>Seamlessly integrate Next.js authentication to your mobile apps.</Text>
           </View>

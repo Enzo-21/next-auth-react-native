@@ -10,12 +10,22 @@
     "test": "jest --watchAll"
   },
   "jest": {
-    "preset": "jest-expo"
+    "preset": "jest-expo",
+    "testPathIgnorePatterns": [
+      "<rootDir>/node_modules/",
+      "<rootDir>/build/",
+      "<rootDir>/dist/"
+    ],
+    "testMatch": [
+      "**/tests/**/*.test.[jt]s?(x)",
+      "**/?(*.)+(spec|test).[jt]s?(x)"
+    ]
   },
   "dependencies": {
     "@expo/vector-icons": "^14.0.0",
     "@hookform/resolvers": "^3.3.4",
     "@react-navigation/native": "^6.0.2",
+    "@tanstack/react-query": "^5.29.2",
     "axios": "^1.6.8",
     "expo": "~50.0.14",
     "expo-blur": "~12.9.2",

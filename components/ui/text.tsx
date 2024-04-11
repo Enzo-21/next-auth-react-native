@@ -9,21 +9,15 @@ type ThemeProps = {
   darkColor?: string;
 };
 
-export type TextProps = ThemeProps & DefaultText['props'] & {
-  fontWeight?: 'regular' | 'semi_bold' | 'bold' | 'extra_bold' | 'black';
-};
+export type TextProps = ThemeProps & DefaultText['props'] 
 
 export function Text(props: TextProps) {
-    const { style, lightColor, darkColor, fontWeight, ...otherProps } = props;
+    const { style, lightColor, darkColor, ...otherProps } = props;
     const color = useThemeColor({ light: lightColor, dark: darkColor }, 'text');
-  
-    const fontWeightStyle: TextStyle = fontWeight
-      ? { fontFamily: fonts[`primary_${fontWeight}` as keyof typeof fonts] }
-      : { fontFamily: fonts.primary_regular }; // Default to regular if fontWeight is not provided
   
     return (
       <DefaultText
-        style={[{ color }, fontWeightStyle, style]}
+        style={[{ color, fontFamily: fonts.primary_regular }, style]}
         {...otherProps}
       />
     );

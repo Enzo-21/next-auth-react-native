@@ -31,7 +31,7 @@ export function AuthProvider({ children }: PropsWithChildren<{}>) {
     }, [user])
 
 
-    const authenticate = async () => {
+    const getMe = async () => {
         try {
             // Get the user
             const user = await UserService.getCurrentUser()
@@ -47,7 +47,7 @@ export function AuthProvider({ children }: PropsWithChildren<{}>) {
     }
 
     useEffect(() => {
-        authenticate()
+        getMe()
     }, [])
 
 
@@ -55,14 +55,14 @@ export function AuthProvider({ children }: PropsWithChildren<{}>) {
     return (
         <AuthContext.Provider value={{
             user,
-            signIn: authenticate,
+            authenticate: getMe,
             signOut: async () => {
                 await removeToken()
                 setUser(null)
                 setIsLoaded(true)
             },
             error,
-            isLoaded 
+            isLoaded
         }}>
             {children}
         </AuthContext.Provider>

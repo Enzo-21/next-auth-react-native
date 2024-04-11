@@ -12,6 +12,7 @@ import Animated, {
   useAnimatedStyle,
   useScrollViewOffset,
 } from 'react-native-reanimated';
+import { ToastProvider } from '@/components/ui/toast';
 
 const { width } = Dimensions.get('window');
 const IMG_HEIGHT = 180;
@@ -36,61 +37,43 @@ export default function AccountScreen() {
       ],
     };
   });
-  const handleLogout = () => {
-    Alert.alert(
-      'Logout',
-      'Are you sure you want to logout?',
-      [
-        { text: 'Cancel', style: 'cancel' },
-        { text: 'Logout', onPress: signOut, style: 'destructive' },
-      ],
-      { cancelable: false }
-    );
-  };
-
-
 
   return (
-  <>
-  <StatusBar style='light'/>
-    <View style={styles.container}>
-      <Animated.ScrollView
-        contentContainerStyle={{ paddingBottom: 100 }}
-        ref={scrollRef}
-        scrollEventThrottle={16}>
+    <>
+      <StatusBar style='light' />
+      <View style={styles.container}>
+        <ToastProvider position='bottom'>
 
-        <Animated.View style={[{ backgroundColor: 'transparent', position: 'relative' }, imageAnimatedStyle]}>
+          <Animated.ScrollView
+            contentContainerStyle={{ minHeight: '100%'}}
+            ref={scrollRef}
+            scrollEventThrottle={16}>
 
-          <Image
-            source={{ uri: user?.image }}
-            style={[styles.image]}
-            resizeMode="cover"
-          />
-          <BlurView experimentalBlurMethod='dimezisBlurView' intensity={30}  tint="dark"  style={styles.blurContainer}/>
-        </Animated.View>
+            <Animated.View style={[{ backgroundColor: 'transparent', position: 'relative' }, imageAnimatedStyle]}>
 
-        <View style={{ marginTop: -40, display: 'flex', justifyContent: 'center', alignItems: 'center', backgroundColor: 'transparent' }}>
-          <View style={{ height: 86, width: 86, borderRadius: 86, borderColor: 'white', backgroundColor: 'white', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-            <Image source={{ uri: user?.image }} style={{ height: 80, width: 80, borderRadius: 80 }} />
-          </View>
-        </View>
+              <Image
+                source={{ uri: user?.image }}
+                style={[styles.image]}
+                resizeMode="cover"
+              />
+              <BlurView experimentalBlurMethod='dimezisBlurView' intensity={30} tint="dark" style={styles.blurContainer} />
+            </Animated.View>
+
+            <View style={{ marginTop: -40, display: 'flex', justifyContent: 'center', alignItems: 'center', backgroundColor: 'transparent' }}>
+              <View style={{ height: 86, width: 86, borderRadius: 86, borderColor: 'white', backgroundColor: 'white', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                <Image source={{ uri: user?.image }} style={{ height: 80, width: 80, borderRadius: 80 }} />
+              </View>
+            </View>
 
 
-          <AccountSettings/>
+            <AccountSettings />
 
-    
-      </Animated.ScrollView>
 
-      <Animated.View style={{ height: 50, display: 'flex', position: 'absolute', bottom: 0, alignSelf: 'center' }} entering={SlideInDown.delay(200)}>
-        <View
-          style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center', backgroundColor: 'transparent' }}>
-          <TouchableOpacity onPress={() => handleLogout()} style={[{ paddingHorizontal: 20, paddingVertical: 10, backgroundColor: 'black', borderRadius: 8, borderColor: 'gray', borderWidth: 2 }]}>
-            <Text fontWeight='bold' style={{ color: 'white' }}>Logout</Text>
-          </TouchableOpacity>
-        </View>
-      </Animated.View>
-    </View>
-  </>
+          </Animated.ScrollView>
+
+        </ToastProvider>
+      </View>
+    </>
   );
 };
 

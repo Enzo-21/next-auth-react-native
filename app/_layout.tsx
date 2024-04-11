@@ -8,6 +8,16 @@ import LoadingScreen from '@/components/indicators/loading-screen';
 
 import { AuthProvider } from '@/hooks/useAuth';
 import { useColorScheme } from 'react-native';
+import {
+  useQuery,
+  useMutation,
+  useQueryClient,
+  QueryClient,
+  QueryClientProvider,
+} from '@tanstack/react-query'
+
+// Create a client
+const queryClient = new QueryClient()
 
 export {
   // Catch any errors thrown by the Layout component.
@@ -44,20 +54,22 @@ export default function RootLayout() {
   }, [loaded]);
 
   if (!loaded) {
-    return <LoadingScreen/>
+    return <LoadingScreen />
   }
 
   return (
-    <AuthProvider>
-      <RootLayoutNav/>
-    </AuthProvider>
-    )
+    <QueryClientProvider client={queryClient}>
+      <AuthProvider>
+        <RootLayoutNav />
+      </AuthProvider>
+    </QueryClientProvider>
+  )
 }
 
 function RootLayoutNav() {
   const colorScheme = useColorScheme();
 
-    return (
+  return (
     <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
       {/* Renders the currently selected content. In our case, the content is being selected by the AuthProvider */}
       <Slot />

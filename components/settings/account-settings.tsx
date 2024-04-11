@@ -3,19 +3,50 @@ import { useAuth } from '@/hooks/useAuth';
 import { SettingsSchema } from '@/schemas';
 import { zodResolver } from '@hookform/resolvers/zod';
 import React, { useRef, useState, useTransition } from 'react';
-import { useForm } from 'react-hook-form';
-import { StyleSheet } from 'react-native';
+import { Controller, useForm } from 'react-hook-form';
+import { ActivityIndicator, Alert, Button, StyleSheet, TouchableOpacity } from 'react-native';
 import { z } from 'zod';
 import { Input } from '../ui/input';
 import { View } from '../ui/view';
+import { fonts } from '@/lib/constants/Fonts';
+import { AccountsService } from '@/services/accounts-service';
+import { ToastProvider, useToast } from '../ui/toast';
+import { useMutation } from '@tanstack/react-query';
 
 const AccountSettings = () => {
 
-  const { user } = useAuth()
-  const [errorMessage, setErrorMessage] = useState<string>()
-  const [successMessage, setSuccessMessage] = useState<string>()
-  const [isPending, startTransition] = useTransition()
-  const inputRef = useRef(null);
+  const { user, authenticate, signOut } = useAuth()
+  const { toast } = useToast();
+
+  const handleLogout = () => {
+    Alert.alert(
+      'Logout',
+      'Are you sure you want to logout?',
+      [
+        { text: 'Cancel', style: 'cancel' },
+        { text: 'Logout', onPress: signOut, style: 'destructive' },
+      ],
+      { cancelable: false }
+    );
+  };
+
+  const mutation = useMutation({
+    mutationFn: (values: z.infer<typeof SettingsSchema>) => AccountsService.updateSettings(values),
+    onSuccess(data) {
+      if (data.error) toast({ message: data.error, variant: 'destructive' })
+      if (data.success) {
+        authenticate()
+        toast({ message: data.success, variant: 'success' })
+      }
+    },
+    onError() {
+      toast({ message: 'Something went wrong' })
+    },
+  })
+
+  const triggerUpdate = (values: z.infer<typeof SettingsSchema>) => {
+    mutation.mutate(values)
+  }
 
   const form = useForm<z.infer<typeof SettingsSchema>>({
     resolver: zodResolver(SettingsSchema),
@@ -32,63 +63,96 @@ const AccountSettings = () => {
 
   return (
     <View style={styles.infoContainer}>
-      <Text fontWeight='bold' style={styles.title}>My Account</Text>
+      <Text style={styles.title}>My Account</Text>
 
-      <Text style={styles.name}>
-        {user?.name}
-      </Text>
-
-      <Text style={styles.email}>
-        {user?.email}
-      </Text>
-
-      <Input
-        ref={inputRef}
-        placeholder="Enter text"
-        keyboardType="default"
-        autoCapitalize="words"
-        autoCorrect={false}
-      />
-      <View style={styles.divider} />
-
-      <View style={{ gap: 15 }}>
+      <View style={{ marginTop: 30, flex: 1, justifyContent: 'space-between' }}>
 
         <View>
-          <Text fontWeight='semi_bold' style={{ fontSize: 16, marginBottom: 5 }}>Role</Text>
-          <Text>{user?.role}</Text>
+          <Controller
+            control={form.control}
+            render={({ field: { onChange, onBlur, value } }) => (
+              <View style={styles.input}>
+                <Text style={styles.label}>Name</Text>
+                <Input
+                  placeholder="Name"
+                  onBlur={onBlur}
+                  onChangeText={onChange}
+                  value={value}
+                />
+              </View>
+            )}
+            name="name"
+          />
+
+          <Controller
+            control={form.control}
+            render={({ field: { onChange, onBlur, value } }) => (
+              <View style={styles.input}>
+                <Text style={styles.label}>Email</Text>
+                <Input
+                  placeholder="Your email"
+                  onBlur={onBlur}
+                  onChangeText={onChange}
+                  value={value}
+                  disabled={true}
+                />
+              </View>
+            )}
+            name="email"
+          />
+
+          <Controller
+            control={form.control}
+            render={({ field: { onChange, onBlur, value } }) => (
+              <View style={styles.input}>
+                <Text style={styles.label}>Role</Text>
+                <Input
+                  placeholder="Select a role"
+                  onBlur={onBlur}
+                  onChangeText={onChange}
+                  value={value}
+                />
+              </View>
+            )}
+            name="role"
+          />
+
+          <View style={styles.divider} />
         </View>
 
-        <View>
-          <Text fontWeight='semi_bold' style={{ fontSize: 16, marginBottom: 5 }}>2FA</Text>
-          <Text>{user?.is2FAenabled.toString()}</Text>
-        </View>
+
+
+        <TouchableOpacity onPress={form.handleSubmit(triggerUpdate)} style={styles.saveBtn}>
+          {mutation.isPending ? (
+            <ActivityIndicator color={'white'} />
+          ) : (
+            <Text style={{ color: 'white', fontFamily: fonts.primary_extra_bold }}>Save</Text>
+          )}
+
+        </TouchableOpacity>
+
       </View>
 
-      <View style={styles.divider} />
 
-      <Text style={styles.description}>{JSON.stringify(user)}</Text>
     </View>
+
   )
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
   infoContainer: {
     padding: 24,
+    flex: 1,
   },
   title: {
     fontSize: 26,
+    fontFamily: fonts.primary_bold
   },
-  name: {
-    fontSize: 18,
-    marginTop: 10,
+  input: {
+    marginTop: 10
   },
-  email: {
-    fontSize: 16,
-    color: 'grey',
-    marginVertical: 4,
+  label: {
+    fontFamily: fonts.primary_bold
   },
   divider: {
     height: StyleSheet.hairlineWidth,
@@ -105,6 +169,15 @@ const styles = StyleSheet.create({
     bottom: 0,
     width: '100%',
     height: '100%'
+  },
+  saveBtn: {
+    width: '100%',
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingVertical: 12,
+    backgroundColor: '#156ab0',
+    borderRadius: 8,
+    marginTop: 15,
   },
 });
 

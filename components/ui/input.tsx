@@ -5,16 +5,17 @@ import { TextInput, StyleSheet, TextInputProps, TextStyle } from 'react-native';
 type InputProps = TextInputProps & {
   lightColor?: string;
   darkColor?: string;
+  disabled?: boolean; 
 };
 
 const Input = forwardRef<TextInput, InputProps>(
-  ({ style, lightColor, darkColor, ...props }, ref) => {
+  ({ style, lightColor, darkColor, disabled, ...props }, ref) => {
     const color = useThemeColor({ light: lightColor, dark: darkColor }, 'text');
 
     return (
       <TextInput
-        ref={ref}
-        style={[styles.input, { color }, style]}
+        style={[styles.input, { color }, style, disabled && styles.disabled]} 
+        editable={!disabled} 
         {...props}
       />
     );
@@ -30,9 +31,12 @@ const styles = StyleSheet.create({
     borderColor: 'gray',
     paddingHorizontal: 10,
     fontSize: 16,
-    marginTop: 8,
-    marginBottom: 8,
+    marginBottom: 8
   },
+  disabled: {
+    backgroundColor: '#80808025', 
+    color: 'gray', 
+  }
 });
 
 export { Input };
