@@ -5,8 +5,9 @@ import { Slot } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { useEffect } from 'react';
 import LoadingScreen from '@/components/indicators/loading-screen';
-import { useColorScheme } from '@/components/useColorScheme';
+
 import { AuthProvider } from '@/hooks/useAuth';
+import { useColorScheme } from 'react-native';
 
 export {
   // Catch any errors thrown by the Layout component.

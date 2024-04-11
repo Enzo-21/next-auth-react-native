@@ -1,6 +1,10 @@
-import { Text, View } from '@/components/Themed';
+import AccountSettings from '@/components/settings/account-settings';
+import { View } from '@/components/ui/view';
+import { Text } from '@/components/ui/text';
 import { useAuth } from '@/hooks/useAuth';
-import { Dimensions, Image, StyleSheet, TouchableOpacity, Button, Alert } from 'react-native';
+import { BlurView } from 'expo-blur';
+import { StatusBar } from 'expo-status-bar';
+import { Alert, Dimensions, Image, StyleSheet, TouchableOpacity } from 'react-native';
 import Animated, {
   SlideInDown,
   interpolate,
@@ -8,8 +12,6 @@ import Animated, {
   useAnimatedStyle,
   useScrollViewOffset,
 } from 'react-native-reanimated';
-import { BlurView } from 'expo-blur';
-import { StatusBar } from 'expo-status-bar';
 
 const { width } = Dimensions.get('window');
 const IMG_HEIGHT = 180;
@@ -74,35 +76,9 @@ export default function AccountScreen() {
         </View>
 
 
+          <AccountSettings/>
 
-        <View style={styles.infoContainer}>
-          <Text fontWeight='bold' style={styles.title}>My Account</Text>
-          <Text style={styles.name}>
-            {user?.name}
-          </Text>
-          <Text style={styles.email}>
-            {user?.email}
-          </Text>
-
-          <View style={styles.divider} />
-
-          <View style={{ gap: 15 }}>
-
-            <View>
-              <Text fontWeight='semi_bold' style={{ fontSize: 16, marginBottom: 5 }}>Role</Text>
-              <Text>{user?.role}</Text>
-            </View>
-
-            <View>
-              <Text fontWeight='semi_bold' style={{ fontSize: 16, marginBottom: 5 }}>2FA</Text>
-              <Text>{user?.is2FAenabled.toString()}</Text>
-            </View>
-          </View>
-
-          <View style={styles.divider} />
-
-          <Text style={styles.description}>{JSON.stringify(user)}</Text>
-        </View>
+    
       </Animated.ScrollView>
 
       <Animated.View style={{ height: 50, display: 'flex', position: 'absolute', bottom: 0, alignSelf: 'center' }} entering={SlideInDown.delay(200)}>
@@ -125,30 +101,6 @@ const styles = StyleSheet.create({
   image: {
     height: IMG_HEIGHT,
     width: width,
-  },
-  infoContainer: {
-    padding: 24,
-  },
-  title: {
-    fontSize: 26,
-  },
-  name: {
-    fontSize: 18,
-    marginTop: 10,
-  },
-  email: {
-    fontSize: 16,
-    color: 'grey',
-    marginVertical: 4,
-  },
-  divider: {
-    height: StyleSheet.hairlineWidth,
-    backgroundColor: 'grey',
-    marginVertical: 16,
-  },
-  description: {
-    fontSize: 16,
-    marginTop: 10,
   },
   blurContainer: {
     overflow: 'hidden',

@@ -1,6 +1,6 @@
 import React from 'react'
-import { View } from '../Themed'
 import { ActivityIndicator, StyleSheet } from 'react-native'
+import { View } from '../ui/view';
 
 const LoadingScreen = () => {
   return (

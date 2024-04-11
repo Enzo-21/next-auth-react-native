@@ -1,9 +1,10 @@
+import { urls } from '@/lib/constants/Urls';
 import { getTokenFromSecureStore } from '@/hooks/useToken';
 import axios, { AxiosInstance } from 'axios';
 
 // Create Axios instance with default configuration
 const api: AxiosInstance = axios.create({
-  baseURL: 'http://localhost:3000', // Replace with your API base URL
+  baseURL: urls.API_URL, // Replace with your API base URL
   timeout: 10000, // Adjust timeout as needed
 });
 

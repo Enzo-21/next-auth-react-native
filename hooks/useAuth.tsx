@@ -36,8 +36,9 @@ export function AuthProvider({ children }: PropsWithChildren<{}>) {
             // Get the user
             const user = await UserService.getCurrentUser()
             if (user) setUser(user)
-                setIsLoaded(true)
+            setIsLoaded(true)
         } catch (error) {
+            router.replace('/(auth)/welcome')
             setError(JSON.stringify(error))
             setUser(null)
             setIsLoaded(true)

@@ -1,9 +1,8 @@
 import React from 'react';
-import Colors from '@/constants/Colors';
+import Colors from '@/lib/constants/Colors';
 import { Link, Tabs } from 'expo-router';
-import { Pressable } from 'react-native';
-import { useColorScheme } from '@/components/useColorScheme';
-import { useClientOnlyValue } from '@/components/useClientOnlyValue';
+import { Pressable, useColorScheme } from 'react-native';
+import { useClientOnlyValue } from '@/hooks/theme/useClientOnlyValue';
 import { Feather } from '@expo/vector-icons';
 
 // You can explore the built-in icon families and icons on the web at https://icons.expo.fyi/

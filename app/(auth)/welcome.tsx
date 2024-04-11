@@ -45,7 +45,7 @@ export default function LoginScreen() {
       >
         <SafeAreaView style={styles.container}>
 
-          <Text fontWeight='black' style={styles.title}>Experience Effortless Authentication for React Native Apps</Text>
+          <Text fontWeight='black' style={styles.title}>Out of the box Authentication for React Native Apps</Text>
           <AnimatedLottieView
             progress={animationProgress.current}
             style={{

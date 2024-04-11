@@ -6,16 +6,19 @@ import { WebView } from 'react-native-webview';
 import { useAuth } from '@/hooks/useAuth';
 import useToken from '@/hooks/useToken';
 import { ActivityIndicator, StyleSheet, View } from 'react-native';
+import { urls } from '@/lib/constants/Urls';
+import { useRouter } from 'expo-router';
 
 const Auth = () => {
     const { removeToken, setToken } = useToken();
     const { signIn } = useAuth();
+    const router = useRouter()
 
     const userAgent = 'Mozilla/5.0 (Linux; Android 12.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/96.0.4664.110 Mobile Safari/537.36';
 
     // Listen for URL changes in the WebView
     const handleNavigationStateChange = async (navState: { url: string }) => {
-        const { url } = navState;
+        const { url } = navState;        
 
         if (url.includes('accessToken=')) {
             const regex = /accessToken=([^&]+)/;
@@ -41,7 +44,7 @@ const Auth = () => {
     return (
         <WebView
             style={styles.container}
-            source={{ uri: 'http://localhost:3000/auth/mobile?newVisit=true' }}
+            source={{ uri: `${urls.API_URL}/auth/mobile?newVisit=true` }}
             onNavigationStateChange={handleNavigationStateChange}
             userAgent={userAgent}
             renderLoading={() => {
