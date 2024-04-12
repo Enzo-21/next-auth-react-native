@@ -1,7 +1,7 @@
-import { Text as DefaultText, View as DefaultView, TextStyle } from 'react-native';
+import { Text as DefaultText } from 'react-native';
 
-import { fonts } from '@/lib/constants/Fonts';
 import { useThemeColor } from '@/hooks/theme/useThemeColor';
+import { fonts } from '@/lib/constants/Fonts';
 
 
 type ThemeProps = {

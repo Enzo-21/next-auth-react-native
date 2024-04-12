@@ -3,11 +3,24 @@ import { useRouter, useSegments } from "expo-router";
 import React, { Context, createContext, PropsWithChildren, useContext, useEffect, useState } from "react";
 import useToken from "./useToken";
 
-// Define AuthContext
-export const AuthContext = createContext<any>(null); // Provide a default type or specify your custom type
+interface AuthContextType {
+    user: any;
+    authenticate: () => Promise<void>;
+    signOut: () => Promise<void>;
+    error: any;
+    isLoaded: boolean;
+}
 
+// Define AuthContext
+export const AuthContext = createContext<AuthContextType | undefined>(undefined);
+
+// Define useAuth hook
 export const useAuth = () => {
-    return useContext(AuthContext)
+    const context = useContext(AuthContext);
+    if (!context) {
+        throw new Error('useAuth must be used within an AuthProvider');
+    }
+    return context as AuthContextType; // Assert non-null for context value
 }
 // Define Provider component
 export function AuthProvider({ children }: PropsWithChildren<{}>) {
@@ -50,20 +63,21 @@ export function AuthProvider({ children }: PropsWithChildren<{}>) {
         getMe()
     }, [])
 
+    const contextValue: AuthContextType = {
+        user,
+        authenticate: getMe,
+        signOut: async () => {
+            await removeToken()
+            setUser(null)
+            setIsLoaded(true)
+        },
+        error,
+        isLoaded
+    };
 
 
     return (
-        <AuthContext.Provider value={{
-            user,
-            authenticate: getMe,
-            signOut: async () => {
-                await removeToken()
-                setUser(null)
-                setIsLoaded(true)
-            },
-            error,
-            isLoaded
-        }}>
+        <AuthContext.Provider value={contextValue}>
             {children}
         </AuthContext.Provider>
     );

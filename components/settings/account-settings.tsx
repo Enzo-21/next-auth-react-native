@@ -12,10 +12,11 @@ import { fonts } from '@/lib/constants/Fonts';
 import { AccountsService } from '@/services/accounts-service';
 import { ToastProvider, useToast } from '../ui/toast';
 import { useMutation } from '@tanstack/react-query';
+import { Switch } from '../ui/switch';
 
 const AccountSettings = () => {
 
-  const { user, authenticate, signOut } = useAuth()
+  const { user, authenticate, signOut, isLoaded } = useAuth()
   const { toast } = useToast();
 
   const handleLogout = () => {
@@ -36,7 +37,7 @@ const AccountSettings = () => {
       if (data.error) toast({ message: data.error, variant: 'destructive' })
       if (data.success) {
         authenticate()
-        toast({ message: data.success, variant: 'success' })
+        toast({ message: data.success, variant: 'success', textColor: 'white', showProgress: false })
       }
     },
     onError() {
@@ -60,6 +61,13 @@ const AccountSettings = () => {
       hasCredentials: user?.hasCredentials as boolean
     }
   })
+
+  const [isEnabled, setIsEnabled] = useState(false);
+
+  if (!isLoaded) {
+    return null
+  }
+
 
   return (
     <View style={styles.infoContainer}>
@@ -117,6 +125,29 @@ const AccountSettings = () => {
             name="role"
           />
 
+          <Controller
+            control={form.control}
+            render={({ field: { onChange, onBlur, value } }) => (
+              <View style={styles.input}>
+                <Text style={styles.label}>2FA</Text>
+                <View style={[ styles.twoFAbox]}>
+                  <View style={{ padding: 1, flex: 1 }}>
+                    <Text>Enable two factor authentication for your account</Text>
+                  </View>
+                  <Switch
+                    thumbColor={'white'}
+                    onValueChange={() => onChange(!value)} value={value}
+                  />
+                </View>
+              </View>
+
+            )}
+            name="is2FAenabled"
+          />
+
+
+
+
           <View style={styles.divider} />
         </View>
 
@@ -151,8 +182,19 @@ const styles = StyleSheet.create({
   input: {
     marginTop: 10
   },
+  twoFAbox: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: 'gray',
+    borderRadius: 10,
+    padding: 8,
+    maxWidth: '100%'
+  },
   label: {
-    fontFamily: fonts.primary_bold
+    fontFamily: fonts.primary_bold,
+    marginVertical: 5
   },
   divider: {
     height: StyleSheet.hairlineWidth,

@@ -11,10 +11,13 @@ const toastVariants = {
 interface ToastProps {
   id: number;
   message: string;
-  onHide: (id: number) => void;
   variant?: keyof typeof toastVariants;
   duration?: number;
   showProgress?: boolean;
+  textColor?: string; 
+  progressBarColor?: string; 
+  progressBackgroundColor?: string; 
+  onHide: (id: number) => void;
 }
 
 function Toast({
@@ -24,6 +27,9 @@ function Toast({
   variant = 'default',
   duration = 3000,
   showProgress = true,
+  textColor = undefined, 
+  progressBarColor = '#000000', 
+  progressBackgroundColor = 'white',
 }: ToastProps) {
   const opacity = useRef(new Animated.Value(0)).current;
   const progress = useRef(new Animated.Value(0)).current;
@@ -65,12 +71,13 @@ function Toast({
         },
       ]}
     >
-      <Text style={styles.toastMessage}>{message}</Text>
+      <Text style={[styles.toastMessage, { color: textColor }]}>{message}</Text> 
       {showProgress && (
-        <View style={styles.progressBar}>
+        <View style={[styles.progressBar, { backgroundColor: progressBackgroundColor }]}> 
           <Animated.View
             style={[
               styles.progress,
+              { backgroundColor: progressBarColor },
               {
                 width: progress.interpolate({
                   inputRange: [0, 1],
@@ -122,6 +129,9 @@ interface ToastMessage {
   duration?: number;
   position?: string;
   showProgress?: boolean;
+  textColor?: string; 
+  progressBarColor?: string; 
+  progressBackgroundColor?: string; 
 }
 interface ToastContextProps {
   toast: (options: {
@@ -130,6 +140,9 @@ interface ToastContextProps {
     duration?: number;
     position?: 'top' | 'bottom';
     showProgress?: boolean;
+    textColor?: string; 
+    progressBarColor?: string; 
+    progressBackgroundColor?: string; 
   }) => void;
   removeToast: (id: number) => void;
 }
@@ -149,13 +162,19 @@ function ToastProvider({
     variant = 'default',
     duration = 3000,
     position,
-    showProgress = true
+    showProgress = true,
+    textColor, 
+    progressBarColor, 
+    progressBackgroundColor, 
   }: {
     message: string;
     variant?: keyof typeof toastVariants;
     duration?: number;
     position?: 'top' | 'bottom';
     showProgress?: boolean;
+    textColor?: string, 
+    progressBarColor?: string, 
+    progressBackgroundColor?: string, 
   }) => {
     setMessages(prev => [
       ...prev,
@@ -166,6 +185,9 @@ function ToastProvider({
         duration,
         position,
         showProgress,
+        textColor,
+        progressBarColor,
+        progressBackgroundColor
       },
     ]);
   };
@@ -186,6 +208,9 @@ function ToastProvider({
             variant={message.variant}
             duration={message.duration}
             showProgress={message.showProgress}
+            textColor={message.textColor}
+            progressBarColor={message.progressBarColor}
+            progressBackgroundColor={message.progressBackgroundColor}
             onHide={removeToast}
           />
         ))}
