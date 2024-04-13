@@ -15,7 +15,7 @@ import Animated, {
 import { ToastProvider } from '@/components/ui/toast';
 
 const { width } = Dimensions.get('window');
-const IMG_HEIGHT = 180;
+const IMG_HEIGHT = 120;
 
 export default function AccountScreen() {
   const { signOut, user } = useAuth()

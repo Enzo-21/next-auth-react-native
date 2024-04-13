@@ -17,7 +17,7 @@ import {
 } from '@tanstack/react-query'
 
 // Create a client
-const queryClient = new QueryClient()
+export const queryClient = new QueryClient()
 
 export {
   // Catch any errors thrown by the Layout component.

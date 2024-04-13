@@ -45,6 +45,7 @@ export function AuthProvider({ children }: PropsWithChildren<{}>) {
 
 
     const getMe = async () => {
+       
         try {
             // Get the user
             const user = await UserService.getCurrentUser()
@@ -55,7 +56,6 @@ export function AuthProvider({ children }: PropsWithChildren<{}>) {
             setError(JSON.stringify(error))
             setUser(null)
             setIsLoaded(true)
-
         }
     }
 

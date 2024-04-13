@@ -24,19 +24,12 @@ export default function TabLayout() {
         // to prevent a hydration error in React Navigation v6.
         headerShown: useClientOnlyValue(false, true),
       }}>
+     
       <Tabs.Screen
-        name="account"
+        name="home"
         options={{
-          title: 'Account',
-          tabBarIcon: ({ color }) => <TabBarIcon name="user" color={color} />,
-          headerShown: false
-        }}
-      />
-      <Tabs.Screen
-        name="about"
-        options={{
-          title: 'About',
-          tabBarIcon: ({ color }) => <TabBarIcon name={"menu"} color={color} />,
+          title: 'Home',
+          tabBarIcon: ({ color }) => <TabBarIcon name={"home"} color={color} />,
           headerRight: () => (
             <Link href="/modal" asChild>
               <Pressable>
@@ -51,6 +44,14 @@ export default function TabLayout() {
               </Pressable>
             </Link>
           ),
+        }}
+      />
+       <Tabs.Screen
+        name="account"
+        options={{
+          title: 'Account',
+          tabBarIcon: ({ color }) => <TabBarIcon name="user" color={color} />,
+          headerShown: false
         }}
       />
     </Tabs>

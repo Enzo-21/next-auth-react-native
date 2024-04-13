@@ -1,18 +1,21 @@
 import { Text } from '@/components/ui/text';
 import { useAuth } from '@/hooks/useAuth';
+import { fonts } from '@/lib/constants/Fonts';
 import { SettingsSchema } from '@/schemas';
+import { AccountsService } from '@/services/accounts-service';
 import { zodResolver } from '@hookform/resolvers/zod';
-import React, { useRef, useState, useTransition } from 'react';
+import { useMutation } from '@tanstack/react-query';
+import React, { useEffect, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
-import { ActivityIndicator, Alert, Button, StyleSheet, TouchableOpacity } from 'react-native';
+import { ActivityIndicator, Alert, StyleSheet, TouchableOpacity } from 'react-native';
+import Animated, { useAnimatedStyle, useSharedValue, withSpring } from 'react-native-reanimated';
 import { z } from 'zod';
 import { Input } from '../ui/input';
-import { View } from '../ui/view';
-import { fonts } from '@/lib/constants/Fonts';
-import { AccountsService } from '@/services/accounts-service';
-import { ToastProvider, useToast } from '../ui/toast';
-import { useMutation } from '@tanstack/react-query';
 import { Switch } from '../ui/switch';
+import { useToast } from '../ui/toast';
+import { View } from '../ui/view';
+import DropDown from '../ui/dropdown';
+import { UserRoles } from '@/lib/constants/User';
 
 const AccountSettings = () => {
 
@@ -33,7 +36,7 @@ const AccountSettings = () => {
 
   const mutation = useMutation({
     mutationFn: (values: z.infer<typeof SettingsSchema>) => AccountsService.updateSettings(values),
-    onSuccess(data) {
+    onSuccess: async (data) => {
       if (data.error) toast({ message: data.error, variant: 'destructive' })
       if (data.success) {
         authenticate()
@@ -49,7 +52,7 @@ const AccountSettings = () => {
     mutation.mutate(values)
   }
 
-  const form = useForm<z.infer<typeof SettingsSchema>>({
+  const { handleSubmit, control, formState: { isDirty, isSubmitSuccessful, isSubmitted }, reset } = useForm<z.infer<typeof SettingsSchema>>({
     resolver: zodResolver(SettingsSchema),
     defaultValues: {
       name: user?.name as string | undefined,
@@ -59,25 +62,49 @@ const AccountSettings = () => {
       role: user?.role as string | undefined,
       is2FAenabled: user?.is2FAenabled as boolean,
       hasCredentials: user?.hasCredentials as boolean
-    }
+    },
   })
-
-  const [isEnabled, setIsEnabled] = useState(false);
 
   if (!isLoaded) {
     return null
   }
 
+  const saveButtonOpacity = useSharedValue(0);
+
+  useEffect(() => {
+    saveButtonOpacity.value = withSpring(isDirty ? 1 : 0);
+  }, [isDirty]);
+
+  const animatedSaveButtonStyle = useAnimatedStyle(() => {
+    return {
+      marginTop: 15,
+      opacity: saveButtonOpacity.value,
+      display: saveButtonOpacity.value ? 'flex' : 'none',
+      transform: [{ scale: saveButtonOpacity.value }],
+    };
+  });
+
+  const [open, setOpen] = useState(false);
+  const [value, setValue] = useState<string | null>(null);
+  const [items, setItems] = useState([
+    { label: UserRoles.ADMIN, value: UserRoles.ADMIN },
+    { label: UserRoles.USER, value: UserRoles.USER },
+  ]);
 
   return (
     <View style={styles.infoContainer}>
       <Text style={styles.title}>My Account</Text>
 
+
       <View style={{ marginTop: 30, flex: 1, justifyContent: 'space-between' }}>
 
+
         <View>
+
+
+
           <Controller
-            control={form.control}
+            control={control}
             render={({ field: { onChange, onBlur, value } }) => (
               <View style={styles.input}>
                 <Text style={styles.label}>Name</Text>
@@ -93,7 +120,7 @@ const AccountSettings = () => {
           />
 
           <Controller
-            control={form.control}
+            control={control}
             render={({ field: { onChange, onBlur, value } }) => (
               <View style={styles.input}>
                 <Text style={styles.label}>Email</Text>
@@ -110,15 +137,17 @@ const AccountSettings = () => {
           />
 
           <Controller
-            control={form.control}
+            control={control}
             render={({ field: { onChange, onBlur, value } }) => (
               <View style={styles.input}>
                 <Text style={styles.label}>Role</Text>
-                <Input
-                  placeholder="Select a role"
-                  onBlur={onBlur}
-                  onChangeText={onChange}
+                <DropDown
+                  open={open}
                   value={value}
+                  items={items}
+                  setOpen={setOpen}
+                  setValue={(value) => onChange(value)} 
+                  setItems={setItems}
                 />
               </View>
             )}
@@ -126,11 +155,11 @@ const AccountSettings = () => {
           />
 
           <Controller
-            control={form.control}
+            control={control}
             render={({ field: { onChange, onBlur, value } }) => (
               <View style={styles.input}>
                 <Text style={styles.label}>2FA</Text>
-                <View style={[ styles.twoFAbox]}>
+                <View style={[styles.twoFAbox]}>
                   <View style={{ padding: 1, flex: 1 }}>
                     <Text>Enable two factor authentication for your account</Text>
                   </View>
@@ -146,21 +175,29 @@ const AccountSettings = () => {
           />
 
 
+        </View>
 
+        <View>
+
+          <Animated.View style={[animatedSaveButtonStyle]}>
+            <TouchableOpacity style={styles.actionBtn} onPress={handleSubmit(triggerUpdate)}>
+              {mutation.isPending ? (
+                <ActivityIndicator color={'white'} />
+              ) : (
+                <Text style={{ color: 'white', fontFamily: fonts.primary_extra_bold }}>Save</Text>
+              )}
+            </TouchableOpacity>
+          </Animated.View>
 
           <View style={styles.divider} />
+
+          <TouchableOpacity onPress={() => handleLogout()} style={[styles.actionBtn, { backgroundColor: 'transparent', borderColor: 'gray', borderWidth: 1 }]}>
+            <Text style={{ color: 'white', fontFamily: fonts.primary_extra_bold }}>Logout</Text>
+          </TouchableOpacity>
         </View>
 
 
 
-        <TouchableOpacity onPress={form.handleSubmit(triggerUpdate)} style={styles.saveBtn}>
-          {mutation.isPending ? (
-            <ActivityIndicator color={'white'} />
-          ) : (
-            <Text style={{ color: 'white', fontFamily: fonts.primary_extra_bold }}>Save</Text>
-          )}
-
-        </TouchableOpacity>
 
       </View>
 
@@ -212,14 +249,13 @@ const styles = StyleSheet.create({
     width: '100%',
     height: '100%'
   },
-  saveBtn: {
+  actionBtn: {
     width: '100%',
     justifyContent: 'center',
     alignItems: 'center',
     paddingVertical: 12,
     backgroundColor: '#156ab0',
     borderRadius: 8,
-    marginTop: 15,
   },
 });
 
